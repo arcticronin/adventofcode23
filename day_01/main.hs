@@ -8,9 +8,9 @@ isPrefixOf (x:xs) (y:ys)
   | x == y = isPrefixOf xs ys
   | otherwise = False
 
--- note, int this example i dropped one letter less of the expected, because
+-- note, int this example I dropped one letter less of the expected, because
 -- there can be superpositions: eightwo -> 82
--- the example didint cover this case i had to struggle a little bit
+-- the example didint cover this case I had to struggle a little bit
 preparse :: String -> String
 preparse [] = []
 preparse str@(x:xs)
@@ -47,6 +47,7 @@ getlast (x:xs)
 
 calcolaRiga :: String -> Int
 -- i want to fold left, so i can increase the power 10^i every number i will find in the natural direction
+-- i wrote this before realising we actually have to cover just 2 digits case, but it works for 2 or more
 calcolaRiga str = foldl (\i x -> (i * 10 + x)) 0 (map digitToInt ( parseLine (preparse str)))
 
 applyOnFile :: FilePath -> IO(Int)
