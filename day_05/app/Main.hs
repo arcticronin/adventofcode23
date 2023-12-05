@@ -3,9 +3,21 @@ module Main where
 import qualified Data.Map as Map
 
 import Data.Maybe (catMaybes)
+
+
+import Data.List.Split (splitOn)
+
 import Control.Applicative (some)
-import Text.Regex.Applicative (RE, sym, string, (=~))
+import Control.Arrow ((&&&))
+
+import Data.Map.Strict qualified as M
+import Data.IntMap.Strict qualified as IM
+import Data.Maybe (fromMaybe)
+
+import Text.Regex.Applicative (RE, sym, string, psym, (=~))
 import Text.Regex.Applicative.Common (decimal)
+
+data MapItem = MapItem {dest :: Int, src :: Int, len :: Int} deriving (Show)
 
 -- Data here
 data Input  = Input Seeds [Categ] deriving (Show)
@@ -75,3 +87,57 @@ main = do
   print "risultati"
   --print results
   print $ minimum results
+
+
+parseMapItem :: String -> MapItem
+parseMapItem line = case map read $ words line of
+    [d, s, l] -> MapItem d s l
+    _ -> error "Invalid input"
+
+parseMap :: String -> [MapItem]
+parseMap = map parseMapItem . tail . lines
+
+parseMaps :: String -> ([Int], [[MapItem]])
+parseMaps input = case splitOn "\n\n" input of
+    (x : ls) -> (map read $ tail $ words x, map parseMap ls)
+    _ -> undefined
+
+mapRange :: Int -> [MapItem] -> Int
+mapRange x [] = x
+mapRange x (MapItem d s l : xs)
+    | s <= x && x < s + l = d + x - s
+    | otherwise = mapRange x xs
+
+part1 :: String -> String
+part1 input = show $ minimum $ map (\x -> foldl mapRange x maps) seeds
+  where
+    (seeds, maps) = parseMaps input
+
+mapRange' :: (Int, Int) -> [MapItem] -> [(Int, Int)]
+mapRange' x [] = [x]
+mapRange' (rs, rl) (MapItem d s l : ms)
+    | rs <= s + l && s < rs + rl = pre ++ curr ++ post
+    | otherwise = mapRange' (rs, rl) ms
+  where
+    pre = if rs < s then mapRange' (rs, s - rs) ms else []
+    curr = [(d + max 0 (rs - s), min rl (l - max 0 (rs - s)))]
+    post = if s + l < rs + rl then mapRange' (s + l, rs + rl - s - l) ms else []
+
+pairUp :: [a] -> [(a, a)]
+pairUp [] = []
+pairUp (x : y : rest) = (x, y) : pairUp rest
+pairUp _ = error "Input list should have an even number of elements."
+
+-- not working
+part2 :: String -> String
+part2 input = show $ fst $ minimum $ foldl mapRange'' (pairUp seeds) maps
+  where
+    (seeds, maps) = parseMaps input
+    mapRange'' :: [(Int, Int)] -> [MapItem] -> [(Int, Int)]
+    mapRange'' xs ms = concatMap (`mapRange'` ms) xs
+
+main2 :: IO ()
+main2 = do
+  y  <- readFile "input.txt"
+  print $ part1 y
+  print $ part2 y

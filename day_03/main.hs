@@ -48,6 +48,8 @@ part1 = do
   --mapM_ print m
   --print $ sum $ map sum m
   --mapM_ print $ map (filter (\x -> x < 305)) m
+  print intsAndPositions
+  print $ sum $ map sum m
   print $ sum $ map sum m
 
 fuse :: ([Int],[Int]) -> [Int]
@@ -59,16 +61,4 @@ checkOverlap tuples list =
   [num | (num, positions) <- tuples, any (`elem` list) positions]
 
 isaHot:: Char -> Bool
-isaHot c
-  | c == '1' = False
-  | c == '2' = False
-  | c == '3' = False
-  | c == '4' = False
-  | c == '5' = False
-  | c == '6' = False
-  | c == '7' = False
-  | c == '8' = False
-  | c == '9' = False
-  | c == '0' = False
-  | c == '.' = False
-  | otherwise = True
+isaHot c = c /= '.' && (not $ isDigit c)

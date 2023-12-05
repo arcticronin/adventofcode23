@@ -71,6 +71,7 @@ executable day05
                     , containers
                     , parsec
                     , regex-applicative
+                    , split
                     -- , recursion-schemes
                     -- , lens
                     -- , mtl

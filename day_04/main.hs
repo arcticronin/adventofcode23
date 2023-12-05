@@ -16,8 +16,8 @@ type Input = [String]
 
 test = "test.txt"
 
-ex = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53"
-ex2 = "41 48 83 86 17 | 83 86  6 31 17  9 48 53"
+ex = "Card 1: 41 48 83 86 17 | 83 86  6 31 17 9 48 53"
+ex2 = "41 48 83 86 17 | 83 86  6 31 17 9 48 53"
 g1 = Game 1 [41,48,83,86,17] [83,86,6,31,17,9,48,53]
 
 numberList :: Parser [Int]
@@ -52,13 +52,6 @@ calcPoints a
   | a == 1 = 1
   | otherwise = 2* calcPoints (a-1)
 
-main :: IO ()
-main = do
-    content <- readFile "test.txt"
-    case parseInput content of
-        Left err -> print err
-        Right games -> mapM_ print games
-
 part1 :: IO ()
 part1 = do
   text <- readFile "input.txt"
@@ -69,9 +62,13 @@ part1 = do
   let startingCards = replicate (length linesText) 1
   let finalCardNumber = applyAll winCountsList startingCards
   --print $ sum $ zipWith (*) winPoints finalCardNumber
+  mapM_ print parsedGames
   print winCountsList
-  print $ sum finalCardNumber
+  --print $ sum finalCardNumber
+  print startingCards
+  print finalCardNumber
   print $ sum (zipWith (*) finalCardNumber winPoints)
+  print $ sum winPoints
 
 -- countValidCards wincountsList available visited -> visited++till available
 countValidCards:: [Int] -> Int -> Int -> Int
