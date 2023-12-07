@@ -5,6 +5,8 @@ import Text.Regex.Applicative (RE, sym, psym, (=~), many)
 import Text.Regex.Applicative.Common (decimal)
 
 import Data.Fixed (HasResolution(resolution))
+import Distribution.Compat.Prelude (RealFrac(ceiling), Num (fromInteger))
+import GHC.Real (fromIntegral)
 
 -- Types
 type Heading = String
@@ -80,3 +82,10 @@ simulateRaceRec (t, d) p
 simulateRaceFold :: (Int, Int) -> Int
 simulateRaceFold (t, d) = foldr (\p acc -> if p * (t - p) > d then acc + 1 else acc) 0 [0..t-1]
 
+speedFromTimeDist:: Int -> Int -> Int
+speedFromTimeDist t d = (m - 1) where
+  fzero = -((t^2 - 4 * d)^2)
+  sol1 = floor . fromIntegral $ (- fzero) `div` 2
+  sol2 = ceiling . fromIntegral $ fzero `div` 2
+  m :: Int
+  m = sol2 - sol1

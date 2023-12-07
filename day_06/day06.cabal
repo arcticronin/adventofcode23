@@ -67,7 +67,8 @@ executable day06
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.17.2.0
+    build-depends:    Cabal-syntax >= 3.8.1.0
+                    , base ^>=4.17.2.0
                     , containers
                     , parsec
                     , regex-applicative
