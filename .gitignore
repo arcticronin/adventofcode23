@@ -1,1 +1,12 @@
+# Ignore all .txt files in all subdirectories
 **/*.txt
+
+# Ignore CHANGELOG.md in all subdirectories
+CHANGELOG.md
+
+# Ignore specific directories in all subdirectories
+**/build/
+**/cache/
+**/packagedb/
+**/dist-newstyle/
+
