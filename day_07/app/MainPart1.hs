@@ -81,6 +81,7 @@ main = do
   rawfile <- readFile "input.txt"
   let lns = lines rawfile
   let games = map parseLine lns
+  print games
   let sorted = sortBy (\ (Game a1 _)  (Game a2 _) -> compareCards a1 a2) games
   let finalScoreForGames = reverse $ zip [x | Game _ x <- sorted][1..length games]
   let result = foldl (+) 0 $ map (\(x, y) -> (x * y)) finalScoreForGames
