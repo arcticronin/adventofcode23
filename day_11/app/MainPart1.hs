@@ -28,8 +28,7 @@ expand :: [Int] -> [Int] -> Int -> ([Int], Int)
 expand coord [] size = (coord, size)
 expand coord (i:is) size =  expand newCoord is newSize
   where
-    --newCoord = [if x > i then x + 1 else x | x <- coord] -- Part 1
-    newCoord = [if x > i then (x+999999) else x | x <- coord] -- Part 2
+    newCoord = [if x > i then x + 1 else x | x <- coord]
     newSize = size + 1
 
 manhattanDistance :: (Int, Int) -> (Int, Int) -> Int
@@ -41,6 +40,13 @@ solveDistances (Universe points _ _) =
        (i, p1) <- zip [0..] points,
        p2 <- drop (i + 1) points]
 
+distanceMatrix :: Universe -> [[Int]]
+distanceMatrix (Universe points _ _) = [[manhattanDistance p1 p2 | p2 <- points] | p1 <- points]
+
+printGrid :: Universe -> IO ()
+printGrid (Universe points maxRow maxColumn) =
+  mapM_ putStrLn [ [if (r, c) `elem` points then '#' else '.' | c <- [0..maxColumn-1]] | r <- [0..maxRow-1]]
+
 main :: IO ()
 main = do
   rawText <- readFile "input.txt"
@@ -51,4 +57,28 @@ main = do
   let points = concatMap relaxPositions $ zip positions [0..]
   let u1 = Universe points maxRows maxColumns
   let u2 = expandUniverse u1
+  print "positions"
+  print positions
+  print "u1"
+  print u1
+  printGrid u1
+  print "u2"
+  print u2
+  printGrid u2
   print $ solveDistances u2
+  let (rs, cs) = unzip points
+  let empty_rows = [0..maxRows-1] \\ nub rs
+  let empty_columns = [0..maxColumns-1] \\ nub cs
+
+  -- Now you can print empty_rows and empty_columns for debugging
+  print "Empty Rows:"
+  print empty_rows
+  print "Empty Columns:"
+
+  print empty_columns
+  let (rs2, _) = expand rs empty_rows maxRows
+  let (cs2, _) = expand cs empty_columns maxColumns
+  print "Original Rows:Columns"
+  print points
+  print "Expanded Rows:Columns"
+  print $ zip rs2 cs2
