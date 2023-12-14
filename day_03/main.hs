@@ -35,22 +35,34 @@ getHotPositions (x:xs) n
   | isaHot x = n: getHotPositions xs (n+1)
   | otherwise = getHotPositions xs (n+1)
 
+
+getGearPositions::String -> Int -> [Int]
+getGearPositions [] _ = []
+getGearPositions (x:xs) n
+  | isaGear x = n: getGearPositions xs (n+1)
+  | otherwise = getGearPositions xs (n+1)
+
+
 part1 :: IO ()
 part1 = do
-  contents <- readFile "input.txt"  -- Read the file
-  let linesOfFile = lines contents  -- Split the content into lines
-      hotPositions = map (\line -> getHotPositions line 0) linesOfFile  -- Apply getHotPositions to each line
-      intsAndPositions = map getIntsAndPositions linesOfFile  -- Apply getIntsAndPositions to each line
+  contents <- readFile "input.txt"
+  let linesOfFile = lines contents
+      hotPositions = map (\line -> getHotPositions line 0) linesOfFile
+      intsAndPositions = map getIntsAndPositions linesOfFile
       hp = map fuse $ zip (map fuse $ zip hotPositions ((tail hotPositions)++ [[]])) ([[]] ++ hotPositions)
       m = zipWith checkOverlap intsAndPositions hp
       result = sum $ map sum m -- 304
+      gearPositions = map (\line -> getGearPositions line 0) linesOfFile  -- Apply getHotPositions to each line
+      gp_extended = map fuse $ zip
+        (map fuse $ zip gearPositions ((tail gearPositions)++ [[]]))
+        ([[]] ++ gearPositions)
   --print $ length m
   --mapM_ print m
   --print $ sum $ map sum m
   --mapM_ print $ map (filter (\x -> x < 305)) m
   print intsAndPositions
   print $ sum $ map sum m
-  print $ sum $ map sum m
+  print $ zip gp_extended [0..]
 
 fuse :: ([Int],[Int]) -> [Int]
 fuse (a,b) = c where
@@ -62,3 +74,6 @@ checkOverlap tuples list =
 
 isaHot:: Char -> Bool
 isaHot c = c /= '.' && (not $ isDigit c)
+
+isaGear:: Char -> Bool
+isaGear c = c == '*'

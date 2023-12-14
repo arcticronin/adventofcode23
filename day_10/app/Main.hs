@@ -98,6 +98,9 @@ getInnerArea points = (sl - lengthOutside + 3) `div` 2
 main :: IO ()
 main = do
     matrix <- readFileToMatrix "input.txt"
-    let (result, path) = maximumBy (comparing fst) (explorePaths matrix $ getStartingIndex matrix)
+    let
+      (result, path) = maximumBy (comparing fst) (explorePaths matrix $ getStartingIndex matrix)
+      res = (explorePaths matrix $ getStartingIndex matrix)
     print result -- part 1
     print $ getInnerArea path -- part 2
+    mapM_ print res
